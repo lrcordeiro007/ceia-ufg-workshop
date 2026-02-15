@@ -101,3 +101,15 @@ O conhecimento adquirido neste módulo servirá como base para os próximos cap�
 
 Nos capítulos seguintes, os containers criados neste módulo serão estendidos para hospedar modelos de linguagem, integrar serviços de recuperação de informação, operar pipelines distribuídos e automatizar processos de entrega contínua em ambientes reais de produção.
 
+
+## Materiais 
+
+- [Slides](https://www.canva.com/design/DAHBZfHnu28/bXEE2GKGCRRtrJAmzLoLkA/edit?utm_content=DAHBZfHnu28&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+- [Documentação do Docker](https://docs.docker.com/guides/)
+- [Developers Roadmap](https://github.com/kamranahmedse/developer-roadmap)
+- [Docker Roadmap](https://roadmap.sh/docker)
+- [História da Virtualização](https://www2.decom.ufop.br/terralab/um-breve-historico-sobre-virtualizacao/)
+- [História dos Containers](https://www.techtarget.com/searchitoperations/feature/Dive-into-the-decades-long-history-of-container-technology)
+- [Análise de Desempenho entre Máquinas Virtuais e Containers](https://www.grupounibra.com/repositorio/REDES/2022/analise-de-desempenho-entre-maquinas-virtuais-e-containers-utilizando-o-docker3.pdf)
+- [Containers e Virtualização](https://www.targetso.com/artigos/containers-e-virtualizacao/)
+
