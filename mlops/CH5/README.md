@@ -172,4 +172,3 @@ Esse conhecimento representa o estágio final da maturidade MLOps apresentada ne
 Com a conclusão deste capítulo, o participante terá percorrido todo o ciclo de vida de um sistema moderno de Inteligência Artificial em produção, desde a containerização inicial até a automação completa de deploy e atualização contínua.
 
 O conteúdo deste módulo fornece uma base sólida para atuação em times de NLP, MLOps, DevOps e Engenharia de IA, além de servir como referência prática para projetos reais em ambientes corporativos e de pesquisa.
-

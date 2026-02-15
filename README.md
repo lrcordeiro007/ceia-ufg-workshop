@@ -75,7 +75,7 @@ Além do aprendizado técnico, o evento atua como um **chamado para novos talent
 
 ## 📂 Estrutura do Repositório
 
-```
+```text
 📦 workshop-nlp-mlops
  ┣ 📁 notebooks
  ┣ 📁 datasets

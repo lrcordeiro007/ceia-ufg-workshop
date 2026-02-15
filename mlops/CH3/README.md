@@ -129,4 +129,3 @@ Esse conhecimento representa um passo essencial para a construção de plataform
 ## Próximos Passos
 
 Nos próximos capítulos, os microsserviços desenvolvidos neste módulo serão integrados a infraestruturas baseadas em servidores e serverless, mecanismos de autoscaling e pipelines automatizados de CI/CD, elevando o ambiente do workshop para um nível próximo ao de sistemas de produção em larga escala.
-

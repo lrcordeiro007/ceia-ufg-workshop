@@ -14,12 +14,6 @@ Neste capítulo, são exploradas diferenças entre embeddings clássicos e embed
 
 Além da teoria, o capítulo demonstra como gerar embeddings para textos em escala, como avaliar sua qualidade e como utilizá-los para tarefas de similaridade semântica, clustering e recuperação de documentos.
 
-## Recuperação de Informação Baseada em Similaridade Semântica
-
-Recuperação de informação moderna vai além da correspondência de palavras-chave e passa a considerar similaridade semântica entre consultas e documentos. Sistemas baseados em embeddings transformam consultas e documentos em vetores, permitindo buscas por proximidade em um espaço vetorial.
-
-Este capítulo explora os conceitos de indexação vetorial, métricas de similaridade como cosseno e distância euclidiana, estratégias de chunking para documentos longos e técnicas de otimização para aumentar relevância e reduzir latência. Também são discutidas limitações comuns, como a diferença entre similaridade e relevância e a necessidade de estratégias híbridas que combinem sinais semânticos e léxicos.
-
 ## Bancos Vetoriais e Infraestrutura para Busca Semântica
 
 Bancos vetoriais são sistemas especializados para armazenamento e consulta eficiente de embeddings em alta dimensão. Eles implementam algoritmos de Approximate Nearest Neighbors para garantir escalabilidade e baixa latência mesmo com milhões de vetores.
@@ -27,6 +21,12 @@ Bancos vetoriais são sistemas especializados para armazenamento e consulta efic
 Neste capítulo, é apresentada a arquitetura de um banco vetorial moderno, incluindo processos de ingestão, indexação, busca e filtragem por metadados. Também são discutidas integrações comuns com pipelines de Machine Learning e sistemas de produção, destacando boas práticas para versionamento de embeddings, controle de qualidade dos dados e manutenção de índices.
 
 O conteúdo enfatiza como bancos vetoriais são fundamentais para aplicações como busca semântica, recomendação, análise de similaridade e Retrieval-Augmented Generation.
+
+## Recuperação de Informação Baseada em Similaridade Semântica
+
+Recuperação de informação moderna vai além da correspondência de palavras-chave e passa a considerar similaridade semântica entre consultas e documentos. Sistemas baseados em embeddings transformam consultas e documentos em vetores, permitindo buscas por proximidade em um espaço vetorial.
+
+Este capítulo explora os conceitos de indexação vetorial, métricas de similaridade como cosseno e distância euclidiana, estratégias de chunking para documentos longos e técnicas de otimização para aumentar relevância e reduzir latência. Também são discutidas limitações comuns, como a diferença entre similaridade e relevância e a necessidade de estratégias híbridas que combinem sinais semânticos e léxicos.
 
 ## RAG — Retrieval-Augmented Generation na Prática
 

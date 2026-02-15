@@ -141,4 +141,3 @@ Também deverá compreender os trade-offs entre diferentes arquiteturas de infra
 ## Próximos Passos
 
 No próximo capítulo, os serviços implantados neste módulo serão integrados a pipelines de CI/CD, permitindo automação completa do ciclo de vida de aplicações de IA, desde o versionamento de código até o deploy contínuo em ambientes de produção.
-

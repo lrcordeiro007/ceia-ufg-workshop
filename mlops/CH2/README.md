@@ -131,4 +131,3 @@ Esse conhecimento é essencial para a construção de sistemas de IA escaláveis
 ## Próximos Passos
 
 Nos capítulos seguintes, os serviços de modelo de linguagem e banco vetorial criados neste módulo serão integrados a APIs públicas, arquiteturas de microsserviços, pipelines de orquestração e fluxos automatizados de CI/CD, aproximando cada vez mais o ambiente do workshop de cenários reais de produção.
-

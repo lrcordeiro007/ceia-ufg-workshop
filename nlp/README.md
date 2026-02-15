@@ -1,7 +1,3 @@
-Perfeito — abaixo está o **README de NLP revisado**, com os **links no mesmo padrão visual e estrutural do README de MLOps**, mantendo o tom técnico e institucional.
-
----
-
 # NLP — Workshop de Processamento de Linguagem Natural
 
 Este diretório contém os materiais do módulo de **Processamento de Linguagem Natural (NLP)** do workshop, organizados em cinco capítulos sequenciais (**CH1 a CH5**). Cada capítulo corresponde a um bloco temático do cronograma oficial do evento e reúne conteúdos teóricos, notebooks, códigos, experimentos e artefatos práticos reutilizáveis.
