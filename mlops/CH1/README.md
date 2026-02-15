@@ -1,52 +1,119 @@
-# CH1 — Introdução ao DevOps, MLOps e Containerização com Docker
+# Fundamentos de MLOps e Docker
 
-Este capítulo apresenta os fundamentos necessários para compreender como sistemas modernos de Machine Learning e Inteligência Artificial são desenvolvidos, empacotados, distribuídos e operados em ambientes de produção. O foco está na convergência entre práticas de DevOps e MLOps, explorando como automação, reprodutibilidade, versionamento e infraestrutura como código se tornam pilares essenciais para a entrega confiável de soluções baseadas em modelos de aprendizado de máquina.
+O objetivo deste material é apresentar o contexto histórico que levou ao surgimento do Docker, explicar como ele funciona internamente e demonstrar como utilizá-lo no dia a dia do desenvolvimento e da implantação de software.
 
-Ao longo deste módulo, o participante será introduzido aos conceitos que sustentam pipelines modernos de Machine Learning em produção, entendendo como o ciclo de vida de um modelo vai além do treinamento e envolve empacotamento, deploy, monitoramento, atualização e governança. Além disso, será abordado o papel da containerização como mecanismo fundamental para garantir portabilidade, isolamento e escalabilidade de aplicações.
+## Contexto histórico e motivação
 
----
+Antes do surgimento de containers, aplicações eram tradicionalmente executadas diretamente em servidores físicos ou virtuais. Em ambientes onde múltiplas aplicações coexistiam em um mesmo servidor, surgiam conflitos de dependências, incompatibilidades entre bibliotecas, divergências de versões de runtime e dificuldades na padronização dos ambientes de desenvolvimento, homologação e produção. Cada aplicação exigia configurações específicas, o que tornava o gerenciamento complexo e sujeito a falhas.
 
-## Contexto: DevOps e MLOps em Sistemas de IA
+<img width="1040" height="588" alt="image" src="https://github.com/user-attachments/assets/abf0ae9e-7b72-412a-819c-623d6eb2cbcc" />
 
-DevOps é um conjunto de práticas que busca integrar desenvolvimento de software e operações, reduzindo o tempo entre a escrita do código e sua execução em produção, ao mesmo tempo em que aumenta a confiabilidade e a qualidade do sistema entregue. Em ambientes de Inteligência Artificial, essa filosofia evolui para MLOps, que amplia o escopo ao incluir dados, experimentos, modelos treinados e monitoramento de desempenho ao longo do tempo.
+Para mitigar esses problemas, a virtualização ganhou força. Máquinas virtuais permitiram isolar aplicações em sistemas operacionais independentes, cada uma com seu próprio kernel, sistema de arquivos e conjunto de recursos. Embora eficaz em termos de isolamento, esse modelo apresentava custos elevados de consumo de memória, processamento e armazenamento, além de tempos de inicialização mais longos e maior sobrecarga operacional.
 
-MLOps trata especificamente dos desafios associados ao ciclo de vida de modelos de Machine Learning, incluindo rastreabilidade de experimentos, versionamento de datasets, reprodutibilidade de treinos, automação de pipelines, validação contínua, detecção de degradação de desempenho e retreinamento automatizado. A combinação dessas práticas permite que modelos deixem de ser protótipos isolados e passem a operar como serviços confiáveis em ambientes reais.
+<img width="1046" height="591" alt="image" src="https://github.com/user-attachments/assets/15c2715c-0412-4431-bced-b586ddecaace" />
 
----
 
-## O Papel da Containerização na Produção de Modelos
+Com a evolução das tecnologias de kernel e isolamento de processos, surgiu o conceito moderno de containers. Diferente das máquinas virtuais, containers compartilham o kernel do sistema operacional hospedeiro, isolando apenas os processos, dependências e o sistema de arquivos necessários para a aplicação. Isso reduziu drasticamente o consumo de recursos e aumentou a eficiência na execução de workloads.
 
-A containerização é uma técnica que permite empacotar uma aplicação junto com todas as suas dependências, bibliotecas e configurações em uma unidade isolada chamada container. Esse modelo garante que o software se comporte da mesma forma independentemente do ambiente em que for executado, seja em um computador local, em um servidor remoto ou em um cluster em nuvem.
+<img width="1044" height="587" alt="image" src="https://github.com/user-attachments/assets/45d48663-689d-49eb-8885-d1537229a9c4" />
 
-No contexto de MLOps, containers são utilizados para encapsular pipelines de treino, serviços de inferência, APIs de modelos e jobs de processamento de dados. Essa abordagem facilita a escalabilidade, a automação de deploys, a replicação de ambientes e a integração com orquestradores como Kubernetes.
+O Docker emergiu como a plataforma que popularizou e padronizou o uso de containers, já que existem outras tecnologias que também trabalham com containers. Ele se consolidou como uma tecnologia open source amplamente adotada, com forte comunidade, integração com provedores de nuvem e um ecossistema robusto para distribuição e execução de aplicações em ambientes isolados .
 
-Docker é a tecnologia adotada neste capítulo como ferramenta principal para criação, execução e gerenciamento de containers, permitindo que os participantes criem imagens reprodutíveis e simulem cenários reais de produção.
+## Conceito de containers e papel do Docker
 
----
+Containers podem ser entendidos como unidades leves e portáteis que empacotam uma aplicação junto com todas as suas dependências, bibliotecas e configurações necessárias para execução. Ao compartilhar o kernel do sistema operacional, eles eliminam a necessidade de replicar recursos completos de um sistema operacional, como ocorre em máquinas virtuais, que precisam replicar interface gráfica, ferramentos de entrada e saída, todo o esquema de pastas e gerenciamento de processos próprios.
 
-## Estrutura do Conteúdo do Capítulo
+O Docker atua como uma plataforma para criar, distribuir e executar containers. Ele fornece ferramentas para empacotar aplicações em imagens, instanciar containers a partir dessas imagens e gerenciar o ciclo de vida dessas instâncias. Sua ampla adoção em ambientes de cloud, como Google Cloud Run e AWS Fargate, reforça seu papel como padrão de mercado para empacotamento e implantação de software moderno.
 
-Este capítulo contém exemplos práticos, imagens Docker, arquivos de configuração e scripts que demonstram como empacotar uma aplicação simples de Machine Learning em um container. Também são apresentados conceitos fundamentais sobre construção de imagens, execução de containers, gerenciamento de dependências e publicação de serviços de inferência.
+## Imagens Docker e containers
 
-O material foi projetado para funcionar como base para os capítulos seguintes, nos quais os containers serão integrados a pipelines, APIs, bancos vetoriais e arquiteturas distribuídas.
+Um container Docker sempre é criado a partir de uma **imagem**. A imagem funciona como um modelo imutável que descreve tudo o que é necessário para executar uma aplicação, incluindo sistema de arquivos, dependências, variáveis de ambiente e comandos de inicialização. É importante compreender que uma imagem não é um container em execução; ela representa apenas a definição estática do ambiente. Podemos pensar nela como um instalador do ambiente no qual é possível rodar a aplicação que ela propõe. 
 
----
+As imagens podem ser listadas localmente utilizando o comando:
 
-## Ambiente e Pré-requisitos
+```bash
+docker images
+```
 
-Para acompanhar as atividades deste capítulo, é esperado que o participante tenha conhecimentos básicos em Python e esteja familiarizado com o uso de terminal e Git. O ambiente recomendado inclui Python versão 3.9 ou superior e Docker instalado e configurado corretamente na máquina.
+Elas podem ser obtidas a partir de repositórios públicos ou privados, como o [Docker Hub](https://hub.docker.com/), ou construídas localmente a partir de um arquivo de configuração chamado **Dockerfile**.
 
-Caso o Docker não esteja instalado, recomenda-se seguir a documentação oficial para instalação conforme o sistema operacional utilizado.
+## Dockerfile e processo de build
 
----
+O Dockerfile é um arquivo declarativo que descreve passo a passo como uma imagem deve ser construída. Podemos pensar nele como uma "receita" que diz como a imagem deve ser constrída. Ele define a imagem base, copia arquivos da aplicação, instala dependências, configura variáveis de ambiente e especifica o comando que será executado quando o container for iniciado .
+
+Exemplo de Dockerfile:
+```dockerfile
+# Define uma imagem base para iniciar o build
+FROM python:3.12.4 
+
+# Define uma variável de ambiente
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Define uma pasta interna na imagem na qual vamos trabalhar a partir dessa linha
+WORKDIR /app
+
+# Copia o arquivo requirements.txt para dentro da pasta /app (onde estamos trabalhando) 
+COPY requirements.txt . 
+
+# Instala dependências do sistema
+RUN pip install --no-cache-dir -r requirements.txt 
+
+# Copia todo o restante dos arquivos da aplicação para a pasta /app
+COPY . . 
+
+# Define comando que será executado quando o container for iniciado
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"] 
+```
+
+O processo de criação de uma imagem a partir de um Dockerfile é realizado com o comando:
+
+```bash
+docker build -f <DOCKERFILE> -t <CONTAINER_NAME> .
+```
+
+Esse comando instrui o Docker a ler o Dockerfile, executar cada instrução em sequência e gerar uma imagem final nomeada conforme especificado.
+
+## Execução de containers
+
+Após a criação da imagem, o próximo passo é instanciar um container em execução. Esse processo transforma a definição estática da imagem em um processo ativo no sistema operacional. O comando `docker run` permite iniciar containers com parâmetros específicos, como mapeamento de portas, volumes e modo interativo .
+
+Um exemplo comum de execução é:
+
+```bash
+docker run -p <OUT_PORT>:<IN_PORT> -it <CONTAINER_NAME>
+```
+
+Esse comando associa uma porta externa da máquina hospedeira a uma porta interna do container, permitindo o acesso à aplicação a partir do ambiente externo.
+
+Containers operam em um modelo de rede isolado, no qual cada instância possui sua própria interface virtual. O Docker permite expor serviços para fora do container por meio do mapeamento de portas, facilitando a comunicação entre aplicações e usuários externos. Esse mecanismo é essencial para executar servidores web, APIs e serviços distribuídos. Por esse motivo precisamos,muitas vezes, expor uma porta com a flag "-p" que mapeia qual porta externa <OUT_PORT> será linkada à porta interna do conteiner <IN_PORT>.
+
+## Fluxo conceitual do Docker
+
+O fluxo de trabalho no Docker segue uma sequência lógica que começa com a definição do Dockerfile, passa pela criação da imagem e culmina na execução do container. Esse modelo permite reprodutibilidade, portabilidade e padronização de ambientes, tornando o processo de desenvolvimento e implantação mais previsível e escalável .
+
+<img width="1048" height="583" alt="image" src="https://github.com/user-attachments/assets/18ced274-c7a5-4535-96dd-a05aff681706" />
+
+## Persistência de dados com volumes
+
+Por padrão, os dados gerados dentro de um container são efêmeros e podem ser perdidos quando ele é removido. Para resolver esse problema, o Docker oferece o conceito de volumes, que permitem mapear diretórios do sistema hospedeiro para dentro do container. Dessa forma, arquivos e dados persistem independentemente do ciclo de vida da instância.
+
+O comando típico para utilização de volumes é:
+
+```bash
+docker run -v <out_path>:<in_path> -it <CONTAINER_NAME>
+```
+
+Esse recurso é fundamental para bancos de dados, logs, arquivos de configuração e qualquer cenário que exija persistência.
+
+Podemos pensar em um volume como uma pasta compartilhada entre o computador hospedeiro e o contaier. Alterações nessa pasta feitas no hospedeiro vão afetar a pasta interna do container e o contrário também ocorre. Por isso a existência da flag "-v" que define um uma pasta externa no sistema <out_path> que será linkada auma pasta interna do container <in_path>.
 
 ## Quickstart: Executando o Capítulo Localmente
 
 O primeiro passo consiste em clonar o repositório do workshop e acessar a pasta do capítulo CH1.
 
 ```bash
-git clone https://github.com/seu-repo/workshop-nlp-mlops.git
-cd workshop-nlp-mlops/mlops/CH1
+git clone https://github.com/CEIA-UFG-GROUPS/ceia-ufg-workshop.git
+cd workshop-nlp-mlops/mlops/CH1/practice
 ```
 
 Em seguida, recomenda-se criar um ambiente virtual Python para isolar dependências e instalar os pacotes necessários.
@@ -78,29 +145,17 @@ docker build -t ch1-mlops-intro .
 Após a construção, a imagem pode ser executada como um container local.
 
 ```bash
-docker run -p 8000:8000 ch1-mlops-intro
+docker run -v logs:/app/logs -p 9000:8000 ch1-mlops-intro # Linux
+docker run -v "%cd%/logs:/app/logs" -p 9000:8000 ch1-mlops-intro # Windows CMD
 ```
 
 Caso a aplicação exponha uma API, ela poderá ser acessada via navegador ou por ferramentas como curl ou Postman.
 
 ```bash
-curl http://localhost:8000/health
+curl http://localhost:8000/
 ```
 
 ---
-
-## Objetivo Prático do Capítulo
-
-Ao final deste capítulo, o participante deverá compreender como empacotar uma aplicação de Machine Learning de forma reprodutível, como isolar dependências utilizando containers e como simular um ambiente de produção local. Também será capaz de explicar o papel do Docker em pipelines de MLOps e como essa tecnologia se conecta com automação, integração contínua e deploy escalável.
-
-O conhecimento adquirido neste módulo servirá como base para os próximos capítulos, nos quais serão integrados modelos de linguagem, bancos vetoriais, APIs de inferência, microsserviços e pipelines de CI/CD.
-
----
-
-## Próximos Passos
-
-Nos capítulos seguintes, os containers criados neste módulo serão estendidos para hospedar modelos de linguagem, integrar serviços de recuperação de informação, operar pipelines distribuídos e automatizar processos de entrega contínua em ambientes reais de produção.
-
 
 ## Materiais 
 
