@@ -20,7 +20,7 @@ dist-ssr
 *.parquet
 
 # Dados sensíveis e variáveis de ambiente
-*.env
+# *.env
 .conda
 *.local
 

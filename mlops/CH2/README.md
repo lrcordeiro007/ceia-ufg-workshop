@@ -1,135 +1,37 @@
-# CH2 Practice - Demo de MLOps + NLP (FastAPI + Qdrant + vLLM)
+# CH2 - Qdrant (Vector DB) & LLMs Locais
 
-Demo mínima de **MLOps e NLP** com três etapas:
+Bem-vindo ao **Capítulo 2** do Workshop MLOps!
 
-1. inserir textos e embeddings no Qdrant,
-2. fazer busca semântica,
-3. gerar resposta com LLM servido por vLLM.
+O foco deste capítulo é **Infraestrutura para IA Generativa**. Vamos sair das APIs prontas (OpenAI) e aprender a rodar nossa própria stack de inteligência.
 
-## O que e vLLM?
+## 🎯 Objetivos de Aprendizado
 
-**vLLM** e um servidor de inferência para LLMs. Ele expõe API compatível com o formato OpenAI e foi desenhado para tornar inferência de modelos mais eficiente.
+1. **Qdrant**: Entender o que é um Banco Vetorial, para que serve e como integrá-lo em uma aplicação Python.
+2. **LLMs Locais**: Aprender a servir modelos Open Source (Llama, Qwen, Mistral) usando Docker, sem depender de nuvem.
 
-Nesta prática, usamos o vLLM como serviço de geração de texto (sem fine-tuning).
+## 📂 O Laboratório: `practice/`
 
-## O que e Qdrant?
+Para demonstrar essas tecnologias, criamos uma aplicação prática (um Chatbot Médico com RAG) que usa o **Qdrant** como memória e um **LLM Local** como cérebro.
 
-**Qdrant** e um banco vetorial. Ele armazena embeddings (vetores) e permite buscar os mais parecidos por similaridade semântica.
+👉 **[ACESSAR O GUIA DA PRÁTICA](./practice/README.md)**
 
-Nesta prática, ele guarda os embeddings dos textos e retorna contexto relevante para a resposta do LLM.
+---
 
-## Arquitetura (resumo)
+## 🛠️ Stack Tecnológica
 
-- **api (FastAPI)**
-  - Gera embeddings com `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`.
-  - Escreve e consulta vetores no Qdrant.
-  - Envia prompt para o vLLM.
-- **qdrant**
-  - Armazena vetores da coleção `workshop_docs`.
-- **vllm**
-  - Serve `microsoft/Phi-4-mini-4k-instruct` em API OpenAI-compatible.
+* **Qdrant**: Escolhido por ser open-source, muito rápido e fácil de subir com Docker.
+* **vLLM / Llama.cpp**: Padrões da indústria para servir modelos LLM com alta performance.
+* **Docker Compose**: Para subir toda essa infraestrutura complexa com um único comando.
 
-Fluxo do endpoint `/ask`:
-`pergunta -> embedding -> busca no Qdrant -> contexto -> prompt -> vLLM -> resposta`
-
-## Estrutura
-
-```text
-mlops/CH2/practice
-├── app
-│   ├── main.py
-│   ├── schemas.py
-│   └── services.py
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-├── .env.example
-└── README.md
-```
-
-## Como rodar com Docker
-
-1. Entre na pasta:
+## 🚦 Quick Start
 
 ```bash
-cd mlops/CH2/practice
-```
-
-1. Crie o arquivo de ambiente:
-
-```bash
-cp .env.example .env
-```
-
-1. Suba os serviços:
-
-```bash
+cd practice
 docker compose up --build
 ```
 
-Serviços:
+Acesse: **<http://localhost>**
 
-- API: `http://localhost:8001`
-- Swagger: `http://localhost:8001/docs`
-- Qdrant: `http://localhost:6333/dashboard`
-- vLLM: `http://localhost:8000`
+---
 
-## Exemplos de requisição
-
-### 1) Inserir textos
-
-```bash
-curl -X POST http://localhost:8001/ingest \
-  -H "Content-Type: application/json" \
-  -d '{
-    "texts": [
-      "vLLM e um servidor de inferencia para LLMs.",
-      "Qdrant e um banco vetorial para busca semantica.",
-      "MLOps conecta desenvolvimento, deploy e operacao de modelos."
-    ],
-    "source": "workshop"
-  }'
-```
-
-Resposta esperada:
-
-```json
-{"collection":"workshop_docs","inserted":3}
-```
-
-### 2) Busca semântica
-
-```bash
-curl -X POST http://localhost:8001/search \
-  -H "Content-Type: application/json" \
-  -d '{"query":"o que e banco vetorial?", "top_k":3}'
-```
-
-### 3) Perguntar com contexto (RAG simples)
-
-```bash
-curl -X POST http://localhost:8001/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question":"Explique vLLM e Qdrant em poucas linhas", "top_k":3}'
-```
-
-## Endpoints
-
-- `POST /ingest`
-  - Entrada: `texts` (lista), `source` (opcional)
-  - Saída: coleção e quantidade inserida
-- `POST /search`
-  - Entrada: `query`, `top_k`
-  - Saída: resultados similares com score
-- `POST /ask`
-  - Entrada: `question`, `top_k`
-  - Saída: resposta do LLM + contexto recuperado
-- `GET /health`
-  - Healthcheck básico da API
-
-## Materiais
-
-- [Slides](https://www.canva.com/design/DAHBZXA8yew/Xiyd_hpJh1MYcXyYvrLF2Q/edit?utm_content=DAHBZXA8yew&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
-- [Documentação do vLLM](https://docs.vllm.ai/en/stable/)
-- [Documentação do Qdrant](https://qdrant.tech/documentation/)
-- [Documentação do FastAPI](https://fastapi.tiangolo.com/)
+> Dúvidas? Consulte o [README detalhado da prática](./practice/README.md).

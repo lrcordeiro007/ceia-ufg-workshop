@@ -1,5 +1,13 @@
 fastapi[standard]
-qdrant-client
-sentence-transformers
+uvicorn
+qdrant-client>=1.9.0
+fastembed
 requests
 python-dotenv
+huggingface_hub
+# Document Processing
+pypdf
+python-docx
+pillow
+pytesseract
+python-multipart

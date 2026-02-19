@@ -1,9 +1,8 @@
 import logging
-import os
+from contextlib import asynccontextmanager
 
-import requests
-from fastapi import FastAPI, HTTPException
-from qdrant_client.http.exceptions import ResponseHandlingException, UnexpectedResponse
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from schemas import (
     AskRequest,
     AskResponse,
@@ -12,81 +11,102 @@ from schemas import (
     SearchRequest,
     SearchResponse,
 )
-from services import DemoService
+from services import OrchestratorService, seed_database
 
-logging.basicConfig(
-    level=os.getenv("LOG_LEVEL", "INFO"),
-    format="%(asctime)s | %(levelname)s | %(message)s",
+# Setup Logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("app")
+
+# Global Service
+orchestrator = None
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global orchestrator
+    logger.info("Startup: Initializing Services...")
+
+    # Initialize implementation
+    orchestrator = OrchestratorService()
+
+    # Run Seeder
+    # Note: embedder model download might happen here
+    seed_database(orchestrator.vector_db)
+
+    yield
+    logger.info("Shutdown: Cleaning up...")
+
+
+app = FastAPI(title="Medical RAG (Edu)", version="3.0", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-
-app = FastAPI(title="CH2 MLOps + NLP Demo", version="1.0.0")
-service = DemoService()
 
 
 @app.get("/health")
-def health() -> dict:
-    return {"status": "ok"}
+def health():
+    if not orchestrator:
+        raise HTTPException(status_code=503, detail="Initializing")
+    return {"status": "ok", "mode": "edu"}
 
 
 @app.post("/ingest", response_model=IngestResponse)
-def ingest(request: IngestRequest) -> IngestResponse:
-    cleaned = [text.strip() for text in request.texts if text.strip()]
-    if not cleaned:
-        raise HTTPException(
-            status_code=400, detail="A lista de textos está vazia após limpeza."
-        )
-
+def ingest(request: IngestRequest):
     try:
-        inserted = service.ingest(texts=cleaned, source=request.source)
-        return IngestResponse(collection=service.collection_name, inserted=inserted)
-    except (ResponseHandlingException, UnexpectedResponse) as exc:
-        raise HTTPException(
-            status_code=503, detail=f"Qdrant indisponível: {exc}"
-        ) from exc
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500, detail=f"Erro ao ingerir textos: {exc}"
-        ) from exc
+        count = orchestrator.vector_db.ingest(request.texts, request.source)
+        return IngestResponse(
+            collection=orchestrator.vector_db.collection_name, inserted=count
+        )
+    except Exception as e:
+        logger.error(f"Ingest failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/ingest-file")
+async def ingest_file(file: UploadFile = File(...)):
+    try:
+        content = await file.read()
+        count = orchestrator.process_and_ingest_file(content, file.filename)
+        return {
+            "filename": file.filename,
+            "inserted_chunks": count,
+            "status": "success",
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"File ingest failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/search", response_model=SearchResponse)
-def search(request: SearchRequest) -> SearchResponse:
-    try:
-        results = service.semantic_search(query=request.query, top_k=request.top_k)
-        if not results:
-            return SearchResponse(results=[])
-        return SearchResponse(results=results)
-    except (ResponseHandlingException, UnexpectedResponse) as exc:
-        raise HTTPException(
-            status_code=503, detail=f"Qdrant indisponível: {exc}"
-        ) from exc
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500, detail=f"Erro na busca semântica: {exc}"
-        ) from exc
+def search(request: SearchRequest):
+    results = orchestrator.vector_db.search(request.query, request.top_k)
+    return SearchResponse(results=results)
 
 
 @app.post("/ask", response_model=AskResponse)
-def ask(request: AskRequest) -> AskResponse:
+def ask(request: AskRequest):
     try:
-        answer, context = service.ask(question=request.question, top_k=request.top_k)
-        return AskResponse(answer=answer, context=context)
-    except requests.RequestException as exc:
-        raise HTTPException(
-            status_code=503, detail=f"vLLM indisponível: {exc}"
-        ) from exc
-    except (ResponseHandlingException, UnexpectedResponse) as exc:
-        raise HTTPException(
-            status_code=503, detail=f"Qdrant indisponível: {exc}"
-        ) from exc
-    except Exception as exc:  # noqa: BLE001
-        raise HTTPException(
-            status_code=500, detail=f"Erro ao gerar resposta: {exc}"
-        ) from exc
+        answer, docs, debug_texts, debug_prompt = orchestrator.ask(request.question)
+
+        return AskResponse(
+            answer=answer,
+            context=docs,
+            retrieved_docs=debug_texts,
+            built_prompt=debug_prompt,
+        )
+    except Exception as e:
+        logger.error(f"Error generation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":
     import uvicorn
 
-    port = int(os.getenv("SERVER_PORT", "8000"))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

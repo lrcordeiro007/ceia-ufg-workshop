@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical RAG System (Edu)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Mobile Header -->
+        <header class="mobile-header">
+            <div class="brand">
+                <ion-icon name="medkit-outline" class="brand-icon"></ion-icon>
+                <h1>MediRAG</h1>
+            </div>
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <ion-icon name="menu-outline"></ion-icon>
+            </button>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar glass-panel" id="sidebar">
+            <!-- Brand visible only on desktop -->
+            <div class="brand mobile-hidden" style="display: none;"> <!-- Hidden via CSS on desktop if we want, but actually we want it shown on desktop. We can use media queries to hide this specific block on mobile if needed, or just let it be. Let's keep it consistent. -->
+                 <ion-icon name="medkit-outline" class="brand-icon pulse"></ion-icon>
+                 <h1>MediRAG</h1>
+            </div>
+            
+            <!-- Desktop Brand (Re-inserted for clarity) -->
+            <div class="brand desktop-only">
+                <ion-icon name="medkit-outline" class="brand-icon pulse"></ion-icon>
+                <h1>MediRAG</h1>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" onclick="switchTab('chat'); toggleSidebar()">
+                    <ion-icon name="chatbubbles-outline"></ion-icon> Chat & RAG
+                </button>
+                <button class="nav-btn" onclick="switchTab('knowledge'); toggleSidebar()">
+                    <ion-icon name="library-outline"></ion-icon> Base de Conhecimento
+                </button>
+            </nav>
+
+            <div class="status-card">
+                <h3>System Status</h3>
+                <div class="status-item"><span class="status-indicator" id="api-status"></span> API Gateway</div>
+                <div class="status-item"><span class="status-indicator" id="llm-status"></span> LLM Service</div>
+                <div class="status-item"><span class="status-indicator" id="db-status"></span> Qdrant DB</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- TAB 1: Chat & RAG Visualization -->
+            <div id="tab-chat" class="tab-content active">
+                <div class="split-view">
+                    <!-- Esquerda: Chat -->
+                    <div class="chat-section glass-panel">
+                        <div class="chat-header">
+                            <h2>Assistente Médico</h2>
+                            <div class="model-badge">Qwen 1.5B (CPU)</div>
+                        </div>
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="message system">
+                                <div class="avatar"><ion-icon name="pulse"></ion-icon></div>
+                                <div class="bubble">Olá! Sou o assistente de ensino. Pergunte algo e veja o fluxo RAG ao lado!</div>
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <div class="input-wrapper">
+                                <input type="text" id="user-input" placeholder="Ex: O que é triagem?" autocomplete="off">
+                            </div>
+                            <button class="send-btn" onclick="sendMessage()"><ion-icon name="send"></ion-icon></button>
+                        </div>
+                    </div>
+
+                    <!-- Direita: Debug/Visualização -->
+                    <div class="debug-section glass-panel">
+                        <div class="debug-header">
+                            <ion-icon name="scan-outline" style="color: var(--primary); font-size: 1.5rem;"></ion-icon>
+                            <h2>Fluxo RAG (Raio-X)</h2>
+                        </div>
+                        
+                        <div class="step-card" id="step-1">
+                            <h3><ion-icon name="search-outline"></ion-icon> 1. Busca Vetorial</h3>
+                            <p class="step-desc">O sistema busca no Qdrant os trechos mais parecidos com sua pergunta.</p>
+                            <div class="code-block" id="debug-retrieved">
+                                <em>Nenhuma busca realizada ainda.</em>
+                            </div>
+                        </div>
+
+                        <div class="step-card" id="step-2">
+                            <h3><ion-icon name="build-outline"></ion-icon> 2. Construção do Prompt</h3>
+                            <p class="step-desc">O contexto recuperado é injetado no prompt do sistema.</p>
+                            <div class="code-block" id="debug-prompt">
+                                <em>Aguardando...</em>
+                            </div>
+                        </div>
+                        
+                        <div class="step-card" id="step-3">
+                            <h3><ion-icon name="hardware-chip-outline"></ion-icon> 3. Geração LLM</h3>
+                            <p class="step-desc">O modelo processa o prompt e gera a resposta final.</p>
+                            <div class="code-block" id="debug-response">
+                                <em>Aguardando...</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Knowledge Base Management -->
+            <div id="tab-knowledge" class="tab-content">
+                <div class="knowledge-panel glass-panel">
+                    <h2 style="margin-bottom: 2rem; font-size: 1.8rem;">Adicionar Conhecimento</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Ensine novos protocolos ao robô. O texto será processado, vetorizado e armazenado no banco de dados Qdrant para recuperação futura.</p>
+                    
+                    <div class="ingest-form">
+                        <label>Novo Protocolo / Texto Médico:</label>
+                        <textarea id="ingest-text" rows="6" placeholder="Cole o texto aqui OU faça upload abaixo..."></textarea>
+                        
+                        <label>Upload de Arquivo (PDF, DOCX, Imagem):</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="ingest-file" accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg">
+                        </div>
+
+                        <label>Fonte / Categoria:</label>
+                        <input type="text" id="ingest-source" placeholder="Ex: Terapia Intensiva - HGG">
+                        
+                        <button class="action-btn" onclick="ingestData()">
+                            <ion-icon name="cloud-upload-outline"></ion-icon> Adicionar ao Cérebro
+                        </button>
+                    </div>
+
+                    <div id="ingest-status" class="status-msg" style="margin-top: 1.5rem; text-align: center;"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

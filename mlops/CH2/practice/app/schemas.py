@@ -1,11 +1,11 @@
-from pydantic import BaseModel, Field
+from typing import Dict, List
+
+from pydantic import BaseModel
 
 
 class IngestRequest(BaseModel):
-    texts: list[str] = Field(
-        ..., min_length=1, description="Lista de textos para indexar"
-    )
-    source: str = Field(default="manual", min_length=1, description="Origem dos textos")
+    texts: List[str]
+    source: str = "user_upload"
 
 
 class IngestResponse(BaseModel):
@@ -14,25 +14,21 @@ class IngestResponse(BaseModel):
 
 
 class SearchRequest(BaseModel):
-    query: str = Field(..., min_length=1)
-    top_k: int = Field(default=3, ge=1, le=10)
-
-
-class SearchResult(BaseModel):
-    text: str
-    score: float
-    source: str
+    query: str
+    top_k: int = 3
 
 
 class SearchResponse(BaseModel):
-    results: list[SearchResult]
+    results: List[Dict]
 
 
 class AskRequest(BaseModel):
-    question: str = Field(..., min_length=1)
-    top_k: int = Field(default=3, ge=1, le=10)
+    question: str
+    top_k: int = 3
 
 
 class AskResponse(BaseModel):
     answer: str
-    context: list[SearchResult]
+    context: List[Dict]
+    retrieved_docs: List[str]  # Simple list of texts
+    built_prompt: str  # The exact prompt sent to LLM
