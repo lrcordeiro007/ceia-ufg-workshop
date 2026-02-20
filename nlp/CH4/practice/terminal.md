@@ -15,7 +15,7 @@ cd nlp/CH4
 ## 3) Criar e ativar ambiente virtual
 
 ```bash
-python -m venv venv
+python3 -m venv venv
 ```
 
 Ativar no Linux/macOS:
