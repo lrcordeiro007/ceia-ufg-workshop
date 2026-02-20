@@ -53,7 +53,7 @@ data/documents/*.md|*.txt|*.pdf
 
 ```bash
 cd nlp/CH5/practice
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate # ou .venv\Scripts\activate no Windows
 pip install -r requirements.txt
 ```
@@ -92,9 +92,9 @@ data/documents/
 ### 5) Rodar pipeline de ingestão
 
 ```bash
-python 01_chunk_documents.py
-python 02_generate_embeddings.py
-python 03_index_qdrant.py
+python3 01_chunk_documents.py
+python3 02_generate_embeddings.py
+python3 03_index_qdrant.py
 ```
 
 ### 6) Subir API de chat com RAG

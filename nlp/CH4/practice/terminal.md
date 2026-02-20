@@ -9,7 +9,7 @@
 ## 2) Entrar na pasta do capítulo
 
 ```bash
-cd nlp/CH4
+cd nlp/CH4/practice
 ```
 
 ## 3) Criar e ativar ambiente virtual
@@ -46,7 +46,7 @@ docker run -p 6333:6333 -d qdrant/qdrant
 
 ## 6) Configurar variáveis de ambiente
 
-Crie um arquivo `.env` na raiz de `nlp/CH4` com:
+Crie um arquivo `.env` na raiz de `nlp/CH4/practice` com:
 
 ```env
 OPENAI_API_KEY=sk-sua-chave-aqui
