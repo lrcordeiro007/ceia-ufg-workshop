@@ -20,14 +20,33 @@ function toggleSidebar() {
 }
 
 // --- Status Polling ---
+let isGenerating = false;
+
 async function checkStatus() {
+    if (isGenerating) {
+        updateStatus('llm-status', 'processing');
+        return;
+    }
+
     try {
         const res = await fetch(`${BASE_URL}/health`);
-        const data = await res.json();
 
-        updateStatus('api-status', 'online');
-        updateStatus('llm-status', 'online');
-        updateStatus('db-status', 'online');
+        if (res.ok) {
+            const data = await res.json();
+            updateStatus('api-status', 'online');
+
+            // Granular Status
+            if (data.services) {
+                updateStatus('llm-status', data.services.llm);
+                updateStatus('db-status', data.services.vector_db);
+            } else {
+                // Fallback for old API version
+                updateStatus('llm-status', 'online');
+                updateStatus('db-status', 'online');
+            }
+        } else {
+            throw new Error("API Error");
+        }
     } catch (e) {
         updateStatus('api-status', 'offline');
         updateStatus('llm-status', 'offline');
@@ -58,6 +77,8 @@ async function sendMessage() {
     document.getElementById('debug-prompt').innerHTML = '<span class="pulse-text">Construindo prompt...</span>';
     document.getElementById('debug-response').innerHTML = '<span class="pulse-text">Gerando resposta...</span>';
 
+    isGenerating = true; // Pause health checks
+
     try {
         const res = await fetch(`${BASE_URL}/ask`, {
             method: 'POST',
@@ -76,6 +97,9 @@ async function sendMessage() {
     } catch (e) {
         addMessage("Erro ao conectar com o servidor.", 'system');
         console.error(e);
+    } finally {
+        isGenerating = false; // Resume health checks
+        checkStatus(); // Force an immediate check
     }
 }
 
@@ -93,7 +117,9 @@ function addMessage(text, sender) {
 function renderDebug(data) {
     // Retrieved Docs
     const docsHtml = data.retrieved_docs.map((doc, i) =>
-        `<div class="doc-item"><strong>Doc ${i + 1}:</strong> ${doc}</div>`
+        `<div class="doc-item">
+            <strong>Doc ${i + 1} (${(doc.score * 100).toFixed(1)}%):</strong> ${doc.text}
+        </div>`
     ).join('');
     document.getElementById('debug-retrieved').innerHTML = docsHtml || "Nenhum documento relevante encontrado.";
 
@@ -142,8 +168,18 @@ async function ingestData() {
             });
             if (res.ok) success = true;
             else {
-                const err = await res.json();
-                status.innerText = `Erro no arquivo: ${err.detail}`;
+                let errDetail = "Erro desconhecido";
+                if (res.status === 413) {
+                    errDetail = "Arquivo muito grande (limite excedido).";
+                } else {
+                    try {
+                        const err = await res.json();
+                        errDetail = err.detail || errDetail;
+                    } catch (e) {
+                        errDetail = `Erro no servidor (Status: ${res.status})`;
+                    }
+                }
+                status.innerText = `Erro no arquivo: ${errDetail}`;
                 status.style.color = "var(--error)";
                 return;
             }

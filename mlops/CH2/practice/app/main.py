@@ -51,7 +51,17 @@ app.add_middleware(
 def health():
     if not orchestrator:
         raise HTTPException(status_code=503, detail="Initializing")
-    return {"status": "ok", "mode": "edu"}
+    
+    # Granular health check
+    health_status = orchestrator.get_health()
+    return {
+        "status": "ok", 
+        "mode": "edu",
+        "services": {
+            "api": "online",
+            **health_status
+        }
+    }
 
 @app.post("/ingest", response_model=IngestResponse)
 def ingest(request: IngestRequest):
@@ -91,7 +101,7 @@ def ask(request: AskRequest):
         return AskResponse(
             answer=answer, 
             context=docs,
-            retrieved_docs=debug_texts,
+            retrieved_docs=docs,
             built_prompt=debug_prompt
         )
     except Exception as e:

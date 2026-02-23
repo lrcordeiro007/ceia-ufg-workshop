@@ -216,6 +216,12 @@ body {
     background: var(--error);
 }
 
+.status-indicator.processing {
+    background: var(--warning);
+    box-shadow: 0 0 8px var(--warning);
+    animation: pulse-opacity 1.5s infinite ease-in-out;
+}
+
 /* Mobile Header */
 .mobile-header {
     display: none;
@@ -372,6 +378,7 @@ body {
     /* Chat bubble shape */
     font-size: 0.95rem;
     line-height: 1.6;
+    white-space: pre-wrap;
     color: var(--text-main);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--glass-border);
