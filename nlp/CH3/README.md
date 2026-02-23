@@ -1,3 +1,7 @@
+Collab: https://colab.research.google.com/drive/1OzWEh-TV4gHutLYxhcnOkKSzRODQchWx?usp=sharing
+Apresentação: https://docs.google.com/presentation/d/1OU37_k4vqa0F8Gwx7_mXPiXXjPhQD3l8T2k8HBX6ub8/edit?usp=sharing
+
+
 # CH3 — Embeddings Avançados, Recuperação de Informação, Bancos Vetoriais e RAG
 
 ## Visão Geral do Capítulo
