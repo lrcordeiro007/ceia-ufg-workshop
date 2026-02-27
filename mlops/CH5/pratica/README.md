@@ -208,7 +208,7 @@ Exemplo de criação de um secret para a chave do LLM:
 gcloud secrets create GOOGLE_API_KEY \
   --replication-policy=\"automatic\"
 
-echo -n \"SUA_CHAVE_AQUI\" | gcloud secrets versions add GOOGLE_API_KEY \
+echo -n \"AIzaSyDlGcnXStq9aBGosdWFMd2KM70Sf-vU2xs\" | gcloud secrets versions add GOOGLE_API_KEY \
   --data-file=-
 ```
 
