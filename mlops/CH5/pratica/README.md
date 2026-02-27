@@ -3,6 +3,7 @@
 Este documento guia você pelo processo completo: do código rodando localmente até o deploy automático na nuvem via pipeline de CI/CD.
 
 ---
+macaco 
 
 ## Visão Geral do Pipeline
 
@@ -132,7 +133,7 @@ Resposta esperada:
 
 ```bash
 gcloud auth login
-gcloud config set project SEU_PROJECT_ID
+gcloud config set project workshop-2026-02
 ```
 
 ### 3.2 Ativar as APIs necessárias
@@ -165,20 +166,20 @@ gcloud iam service-accounts create github-deployer \
 Conceder as permissões necessárias (Cloud Build, Cloud Run, Service Account e Storage):
 
 ```bash
-gcloud projects add-iam-policy-binding SEU_PROJECT_ID \
-  --member="serviceAccount:github-deployer@SEU_PROJECT_ID.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding workshop-2026-02 \
+  --member="serviceAccount:github-deployer@workshop-2026-02.iam.gserviceaccount.com" \
   --role="roles/cloudbuild.builds.editor"
 
-gcloud projects add-iam-policy-binding SEU_PROJECT_ID \
-  --member="serviceAccount:github-deployer@SEU_PROJECT_ID.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding workshop-2026-02 \
+  --member="serviceAccount:github-deployer@workshop-2026-02.iam.gserviceaccount.com" \
   --role="roles/run.admin"
 
-gcloud projects add-iam-policy-binding SEU_PROJECT_ID \
-  --member="serviceAccount:github-deployer@SEU_PROJECT_ID.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding workshop-2026-02 \
+  --member="serviceAccount:github-deployer@workshop-2026-02.iam.gserviceaccount.com" \
   --role="roles/iam.serviceAccountUser"
 
-gcloud projects add-iam-policy-binding SEU_PROJECT_ID \
-  --member="serviceAccount:github-deployer@SEU_PROJECT_ID.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding workshop-2026-02 \
+  --member="serviceAccount:github-deployer@workshop-2026-02.iam.gserviceaccount.com" \
   --role="roles/storage.admin"
 ```
 
@@ -186,7 +187,7 @@ Gerar e baixar a chave JSON:
 
 ```bash
 gcloud iam service-accounts keys create sa-key.json \
-  --iam-account=github-deployer@SEU_PROJECT_ID.iam.gserviceaccount.com
+  --iam-account=github-deployer@workshop-2026-02.iam.gserviceaccount.com
 ```
 
 > **Atenção:** nunca faça commit deste arquivo. Adicione `sa-key.json` ao seu `.gitignore`.
@@ -207,15 +208,15 @@ Exemplo de criação de um secret para a chave do LLM:
 gcloud secrets create GOOGLE_API_KEY \
   --replication-policy=\"automatic\"
 
-echo -n \"sua-chave-aqui\" | gcloud secrets versions add GOOGLE_API_KEY \
+echo -n \"AIzaSyDlGcnXStq9aBGosdWFMd2KM70Sf-vU2xs\" | gcloud secrets versions add GOOGLE_API_KEY \
   --data-file=-
 ```
 
 Para que o serviço no Cloud Run possa ler esse secret, conceda o papel de acesso:
 
 ```bash
-gcloud projects add-iam-policy-binding SEU_PROJECT_ID \
-  --member=\"serviceAccount:learning-llmops@SEU_PROJECT_ID.iam.gserviceaccount.com\" \
+gcloud projects add-iam-policy-binding workshop-2026-02 \
+  --member=\"serviceAccount:learning-llmops@workshop-2026-02.iam.gserviceaccount.com\" \
   --role=\"roles/secretmanager.secretAccessor\"
 ```
 
@@ -320,3 +321,4 @@ Ao final do processo você terá:
 - Um serviço LLM rodando no **Cloud Run**, acessível via HTTPS
 - Um **pipeline de CI/CD** configurado: qualquer mudança na pasta `mlops/CH5/` e push na `main` resulta em um novo deploy automático
 - A **documentação interativa** da API disponível em `https://sua-url.run.app/docs`
+
