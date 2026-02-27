@@ -1,5 +1,5 @@
 # Framework web
-fastapi==0.119.0
+fastapi
 uvicorn[standard]==0.37.0
 
 # Validação de dados
